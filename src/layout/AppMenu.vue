@@ -5,8 +5,21 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
     {
-        label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+        label: 'Trang chủ',
+        items: [{ label: 'Bảng điều kiển', icon: 'pi pi-fw pi-home', to: '/' }]
+    },
+    {
+        label: 'Quản lý thông tin ',
+        items: [
+            { label: 'Bệnh cây', icon: 'pi pi-fw pi-book', to: '/uikit/formlayout' },
+            { label: 'Lịch sử', icon: 'pi pi-fw pi-history', to: '/uikit/input' },
+            { label: 'Phản hồi', icon: 'pi pi-fw pi-comments', to: '/uikit/floatlabel' },
+            { label: 'Người dùng', icon: 'pi pi-fw pi-users', to: '/manage-system/manage-user' }
+        ]
+    },
+    {
+        label: 'Tài khoản',
+        items: [{ label: 'Đăng xuất', icon: 'pi pi-fw pi-sign-out', to: '/logout' }]
     },
     {
         label: 'UI Components',
@@ -176,11 +189,6 @@ const model = ref([
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
-        <li>
-            <a href="https://www.primefaces.org/primeblocks-vue/#/" target="_blank">
-                <img src="/layout/images/banner-primeblocks.png" alt="Prime Blocks" class="w-full mt-3" />
-            </a>
-        </li>
     </ul>
 </template>
 

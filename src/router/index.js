@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
+import { useAuthStore } from '../stores/storeAuth';
+import { mapActions, storeToRefs } from 'pinia';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -11,7 +13,14 @@ const router = createRouter({
                 {
                     path: '/',
                     name: 'dashboard',
+                    meta: { requiresAuth: true },
                     component: () => import('@/views/Dashboard.vue')
+                },
+                {
+                    path: '/manage-system/manage-user',
+                    name: 'manage-user',
+                    meta: { requiresAuth: true },
+                    component: () => import('@/views/manages/ManageUser.vue')
                 },
                 {
                     path: '/uikit/formlayout',
@@ -160,6 +169,16 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Login.vue')
         },
         {
+            path: '/logout',
+            name: 'logout',
+            beforeEnter: (to, from, next) => {
+                const authStore = useAuthStore();
+
+                authStore.logout();
+                next('/'); // Chuyển hướng đến '/auth/login'
+            }
+        },
+        {
             path: '/auth/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
@@ -170,6 +189,23 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         }
     ]
+});
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore();
+    const { isAuthenticated, tokenExpiration } = storeToRefs(authStore);
+    console.log(JSON.parse(localStorage.getItem('user')));
+    console.log(localStorage.getItem('tokenExpiration'));
+    console.log('isAuthenticated', isAuthenticated.value);
+    console.log('tokenExpiration', tokenExpiration.value);
+
+    // Kiểm tra nếu yêu cầu yêu cầu xác thực và người dùng chưa đăng nhập hoặc token đã hết hạn
+    if (to.meta.requiresAuth && (!isAuthenticated.value || tokenExpiration.value <= Date.now())) {
+        // Chuyển hướng đến trang đăng nhập
+        next('/auth/login');
+    } else {
+        // Tiếp tục chuyển hướng đến vị trí mong muốn
+        next();
+    }
 });
 
 export default router;
